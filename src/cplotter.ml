@@ -63,6 +63,7 @@ let button_onclick () =
     get_currency_first (), get_currency_second (), get_frequency (), get_limit ()
   with
   | Some currency_from, Some currency_to, Some frequency, Some limit -> begin
+    let open Promise.Infix in
     let url =
       CryptoCompare.make_url
         ~first:currency_from
@@ -70,7 +71,17 @@ let button_onclick () =
         ~frequency
         ~limit
     in
-    Html.window##alert (Js.string url)
+    Data.get url
+    >|| (
+      (fun response ->
+        let open CryptoCompare in
+        let message =
+          Printf.sprintf "Got %d data points" (List.length response.data)
+        in
+        Html.window##alert (Js.string message)),
+      (fun error ->
+        Html.window##alert error##toString)
+    )
   end
   | _ -> ()
 
