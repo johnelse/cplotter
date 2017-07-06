@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <title>cplotter</title>
+        <script src="cplotter.js"></script>
+    </head>
+    <body>
+        <p>
+            <select id="currencyfirst">
+                <option value="BTC"         >BTC</option>
+                <option value="ETH" selected>ETH</option>
+                <option value="USD"         >USD</option>
+                <option value="GBP"         >GBP</option>
+            </select>
+            <select id="currencysecond">
+                <option value="BTC" selected>BTC</option>
+                <option value="ETH"         >ETH</option>
+                <option value="USD"         >USD</option>
+                <option value="GBP"         >GBP</option>
+            </select>
+            <select id="frequency">
+                <option value="histominute"         >minute</option>
+                <option value="histohour"   selected>hour</option>
+                <option value="histoday"            >day</option>
+            </select>
+            <input id="limit" type="number" value="24" min="1" max="240">
+            <button id="load">Load</button>
+        </p>
+        <p>
+            <canvas id="graph" width="800" height="400"></canvas>
+        </p>
+    </body>
+</html>

@@ -1,0 +1,20 @@
+opam-version: "1.2"
+author: "John Else <john.else@gmail.com>"
+maintainer: "John Else <john.else@gmail.com>"
+homepage: "https://github.com/johnelse/cryptoplotter"
+bug-reports: "https://github.com/johnelse/cryptoplotter/issues"
+dev-repo: "git://github.com/johnelse/cryptoplotter"
+build: [
+  [make "build"]
+]
+install: [
+  [make "PREFIX=%{prefix}%" "install"]
+]
+remove: [
+  [make "PREFIX=%{prefix}%" "uninstall"]
+]
+depends: [
+  "jbuilder" {build}
+  "js_of_ocaml"
+  "promise-js"
+]

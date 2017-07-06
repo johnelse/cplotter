@@ -1,0 +1,5 @@
+PKG js_of_ocaml js_of_ocaml-ppx promise-js
+
+S src
+
+B _build/src

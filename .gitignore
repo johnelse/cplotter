@@ -1,0 +1,8 @@
+*.byte
+*.swp
+
+_build
+setup.data
+setup.log
+
+page/cplotter.js

@@ -1,0 +1,19 @@
+OASISFormat:  0.4
+Name:         cplotter
+Version:      0.1.0
+Synopsis:     Program for visualising cryptocurrency price histories
+License:      MIT
+Authors:      John Else
+Copyrights:   (C) 2017 John Else
+BuildTools:   ocamlbuild
+Plugins:      META (0.4), DevFiles (0.4)
+
+PostCleanCommand: rm -f page/cplotter.js
+
+Executable cplotter
+  CompiledObject: byte
+  Path:           src
+  MainIs:         cplotter.ml
+  BuildDepends:   js_of_ocaml, js_of_ocaml-ppx, promise-js
+
+PostBuildCommand: js_of_ocaml.exe cplotter.byte --pretty -o page/cplotter.js
