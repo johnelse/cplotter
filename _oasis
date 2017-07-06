@@ -14,6 +14,6 @@ Executable cplotter
   CompiledObject: byte
   Path:           src
   MainIs:         cplotter.ml
-  BuildDepends:   js_of_ocaml, js_of_ocaml-ppx, promise-js
+  BuildDepends:   js_of_ocaml, js_of_ocaml-ppx, ppx_deriving_rpc, promise-js, rpclib.json
 
 PostBuildCommand: js_of_ocaml.exe cplotter.byte --pretty -o page/cplotter.js

@@ -26,6 +26,7 @@ end
 
 module Data = struct
   let get url =
+    let open Promise.Infix in
     Promise.make
       (fun resolve reject ->
         let request = XmlHttpRequest.create () in
@@ -41,6 +42,14 @@ module Data = struct
             end);
 
         request##send Js.null)
+
+    >>= (fun responseText ->
+      try
+        Promise.resolve
+          (CryptoCompare.response_of_string (Js.to_string responseText))
+      with e ->
+        Promise.reject
+          (new%js Js.error_constr (Printexc.to_string e |> Js.string)))
 end
 
 module Drawing = struct

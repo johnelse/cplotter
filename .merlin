@@ -1,4 +1,4 @@
-PKG js_of_ocaml js_of_ocaml-ppx promise-js
+PKG js_of_ocaml js_of_ocaml-ppx ppx_deriving_rpc promise-js rpclib.json
 
 S src
 

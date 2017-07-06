@@ -17,4 +17,5 @@ depends: [
   "jbuilder" {build}
   "js_of_ocaml"
   "promise-js"
+  "rpc"
 ]
