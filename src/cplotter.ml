@@ -35,11 +35,11 @@ module Output = struct
   let set_message message = set_div_innerHTML "message" message
 
   let set_average_high value =
-    set_div_innerHTML "avghigh"
+    set_div_innerHTML "averagehigh"
       (Printf.sprintf "Average high: %f" value |> Js.string)
 
   let set_average_low value =
-    set_div_innerHTML "avglow"
+    set_div_innerHTML "averagelow"
       (Printf.sprintf "Average low: %f" value |> Js.string)
 end
 
