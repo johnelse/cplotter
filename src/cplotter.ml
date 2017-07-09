@@ -33,6 +33,14 @@ module Output = struct
     | None -> ()
 
   let set_message message = set_div_innerHTML "message" message
+
+  let set_average_high value =
+    set_div_innerHTML "avghigh"
+      (Printf.sprintf "Average high: %f" value |> Js.string)
+
+  let set_average_low value =
+    set_div_innerHTML "avglow"
+      (Printf.sprintf "Average low: %f" value |> Js.string)
 end
 
 module Data = struct
@@ -61,6 +69,25 @@ module Data = struct
       with e ->
         Promise.reject
           (new%js Js.error_constr (Printexc.to_string e |> Js.string)))
+
+  type summary = {
+    average_high: float;
+    average_low:  float;
+  }
+
+  let summarise response =
+    let count, sum_high, sum_low =
+      let open CryptoCompare in
+      List.fold_left
+        (fun (count, sum_high, sum_low) data_point ->
+          count + 1, sum_high +. data_point.high, sum_low +. data_point.low)
+        (0, 0., 0.)
+        response.data
+    in
+    {
+      average_high = sum_high /. (float_of_int count);
+      average_low  = sum_low  /. (float_of_int count);
+    }
 end
 
 module Drawing = struct
@@ -113,7 +140,11 @@ let button_onclick () =
       (fun response ->
         Output.set_message (Js.string "done");
         let open CryptoCompare in
-        Drawing.(with_context (fun context -> render_data context response))),
+        Drawing.(with_context (fun context -> render_data context response));
+        let summary = Data.summarise response in
+        Output.set_average_high summary.Data.average_high;
+        Output.set_average_low  summary.Data.average_low;
+      ),
       (fun error ->
         Output.set_message (error##toString))
     )
