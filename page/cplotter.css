@@ -18,3 +18,8 @@ div#controls, div#drawing {
     margin-top:    5px;
     margin-bottom: 5px;
 }
+
+canvas#graph {
+    width:  800px;
+    height: 400px;
+}
