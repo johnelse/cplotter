@@ -24,6 +24,17 @@ module Input = struct
     | None -> None
 end
 
+module Output = struct
+  let set_message_js js_message =
+    match Html.getElementById_coerce "message" Html.CoerceTo.div with
+    | Some div -> begin
+      div##.innerHTML := js_message
+    end
+    | None -> ()
+
+  let set_message message = set_message_js (Js.string message)
+end
+
 module Data = struct
   let get url =
     let open Promise.Infix in
@@ -88,6 +99,7 @@ let button_onclick () =
     get_currency_first (), get_currency_second (), get_frequency (), get_limit ()
   with
   | Some currency_from, Some currency_to, Some frequency, Some limit -> begin
+    Output.set_message "loading...";
     let open Promise.Infix in
     let url =
       CryptoCompare.make_url
@@ -99,10 +111,11 @@ let button_onclick () =
     Data.get url
     >|| (
       (fun response ->
+        Output.set_message "done";
         let open CryptoCompare in
         Drawing.(with_context (fun context -> render_data context response))),
       (fun error ->
-        Html.window##alert error##toString)
+        Output.set_message_js (error##toString))
     )
   end
   | _ -> ()
