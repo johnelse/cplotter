@@ -53,8 +53,33 @@ module Data = struct
 end
 
 module Drawing = struct
+  type context = {
+    ctx:    Html.canvasRenderingContext2D Js.t;
+    width:  int;
+    height: int;
+  }
+
   let get_canvas () =
     Html.getElementById_coerce "graph" Html.CoerceTo.canvas
+
+  let with_context paint =
+    match get_canvas () with
+    | Some canvas -> begin
+      let context = {
+        ctx    = canvas##getContext Html._2d_;
+        width  = canvas##.width;
+        height = canvas##.height;
+      } in
+      paint context
+    end
+    | None -> ()
+
+  let fill_background {ctx; width; height} =
+    ctx##.fillStyle := Js.string "#CCCCCC";
+    ctx##fillRect 0. 0. (float_of_int width) (float_of_int height)
+
+  let render_data {ctx; width; height} response =
+    fill_background {ctx; width; height}
 end
 
 let button_onclick () =
@@ -75,10 +100,7 @@ let button_onclick () =
     >|| (
       (fun response ->
         let open CryptoCompare in
-        let message =
-          Printf.sprintf "Got %d data points" (List.length response.data)
-        in
-        Html.window##alert (Js.string message)),
+        Drawing.(with_context (fun context -> render_data context response))),
       (fun error ->
         Html.window##alert error##toString)
     )
@@ -93,7 +115,8 @@ let window_onload () =
         let () = button_onclick () in
         Js._false)
   end
-  | None -> ()
+  | None -> ();
+  Drawing.(with_context fill_background)
 
 let () =
   Html.window##.onload := Html.handler
