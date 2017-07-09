@@ -94,11 +94,9 @@ module Data = struct
           sum_high +. data_point.high,
           sum_low +. data_point.low,
           max overall_high data_point.high,
-          if overall_low = 0.
-          then data_point.low
-          else min overall_low data_point.low
+          min overall_low data_point.low
         )
-        (0, 0., 0., 0., 0.)
+        (0, 0., 0., 0., max_float)
         response.data
     in
     {
