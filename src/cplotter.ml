@@ -41,6 +41,14 @@ module Output = struct
   let set_average_low value =
     set_div_innerHTML "averagelow"
       (Printf.sprintf "Average low: %f" value |> Js.string)
+
+  let set_overall_high value =
+    set_div_innerHTML "overallhigh"
+      (Printf.sprintf "Overall high: %f" value |> Js.string)
+
+  let set_overall_low value =
+    set_div_innerHTML "overalllow"
+      (Printf.sprintf "Overall low: %f" value |> Js.string)
 end
 
 module Data = struct
@@ -73,20 +81,31 @@ module Data = struct
   type summary = {
     average_high: float;
     average_low:  float;
+    overall_high: float;
+    overall_low:  float;
   }
 
   let summarise response =
-    let count, sum_high, sum_low =
+    let count, sum_high, sum_low, overall_high, overall_low =
       let open CryptoCompare in
       List.fold_left
-        (fun (count, sum_high, sum_low) data_point ->
-          count + 1, sum_high +. data_point.high, sum_low +. data_point.low)
-        (0, 0., 0.)
+        (fun (count, sum_high, sum_low, overall_high, overall_low) data_point ->
+          count + 1,
+          sum_high +. data_point.high,
+          sum_low +. data_point.low,
+          max overall_high data_point.high,
+          if overall_low = 0.
+          then data_point.low
+          else min overall_low data_point.low
+        )
+        (0, 0., 0., 0., 0.)
         response.data
     in
     {
       average_high = sum_high /. (float_of_int count);
       average_low  = sum_low  /. (float_of_int count);
+      overall_high;
+      overall_low
     }
 end
 
@@ -144,6 +163,8 @@ let button_onclick () =
         let summary = Data.summarise response in
         Output.set_average_high summary.Data.average_high;
         Output.set_average_low  summary.Data.average_low;
+        Output.set_overall_high summary.Data.overall_high;
+        Output.set_overall_low  summary.Data.overall_low;
       ),
       (fun error ->
         Output.set_message (error##toString))
