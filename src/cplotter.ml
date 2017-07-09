@@ -108,6 +108,7 @@ let button_onclick () =
   | _ -> ()
 
 let window_onload () =
+  Drawing.(with_context fill_background);
   match Html.getElementById_coerce "load" Html.CoerceTo.button with
   | Some button -> begin
     button##.onclick := Html.handler
@@ -115,8 +116,7 @@ let window_onload () =
         let () = button_onclick () in
         Js._false)
   end
-  | None -> ();
-  Drawing.(with_context fill_background)
+  | None -> ()
 
 let () =
   Html.window##.onload := Html.handler
