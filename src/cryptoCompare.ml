@@ -1,5 +1,5 @@
 let make_url ~first ~second ~frequency ~limit =
-  Printf.sprintf "https://min-api.cryptocompare.com/data/%s?fsym=%s&tsym=%s&limit=%d&aggregate=3&e=CCCAGG"
+  Printf.sprintf "https://min-api.cryptocompare.com/data/%s?fsym=%s&tsym=%s&limit=%d&aggregate=3&e=Kraken"
     (Frequency.to_string frequency)
     (Currency.to_string first)
     (Currency.to_string second)
