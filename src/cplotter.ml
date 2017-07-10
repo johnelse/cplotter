@@ -83,11 +83,13 @@ module Data = struct
     average_low:  float;
     overall_high: float;
     overall_low:  float;
+    time_from:    int;
+    time_to:      int;
   }
 
   let summarise response =
+    let open CryptoCompare in
     let count, sum_high, sum_low, overall_high, overall_low =
-      let open CryptoCompare in
       List.fold_left
         (fun (count, sum_high, sum_low, overall_high, overall_low) data_point ->
           count + 1,
@@ -103,7 +105,9 @@ module Data = struct
       average_high = sum_high /. (float_of_int count);
       average_low  = sum_low  /. (float_of_int count);
       overall_high;
-      overall_low
+      overall_low;
+      time_from = response.time_from;
+      time_to   = response.time_to;
     }
 end
 
@@ -133,8 +137,54 @@ module Drawing = struct
     ctx##.fillStyle := Js.string "#CCCCCC";
     ctx##fillRect 0. 0. (float_of_int width) (float_of_int height)
 
-  let render_data {ctx; width; height} response =
-    fill_background {ctx; width; height}
+  let choose_colour data_point =
+    let open CryptoCompare in
+    let colour_string =
+      if data_point.close > data_point._open then "#00FF00"
+      else if data_point.close < data_point._open then "#FF0000"
+      else "#666666"
+    in
+    Js.string colour_string
+
+  let draw_candles {ctx; width; height} summary data_points =
+    let open CryptoCompare in
+    let open Data in
+    let pixels_per_unit_cost =
+      (float_of_int height) /.
+      (summary.Data.overall_high -. summary.Data.overall_low)
+    in
+    let x_of_time time =
+      (float_of_int width)
+      *. (float_of_int (time            - summary.time_from))
+      /. (float_of_int (summary.time_to - summary.time_from))
+    in
+    let y_of_cost cost =
+      (float_of_int height) -.
+      (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
+    in
+    List.iter
+      (fun data_point ->
+        let colour = choose_colour data_point in
+        ctx##.strokeStyle := colour;
+        ctx##.fillStyle := colour;
+        let x = x_of_time data_point.time in
+        let y_close = y_of_cost data_point.close in
+        let y_high  = y_of_cost data_point.high in
+        let y_low   = y_of_cost data_point.low in
+        let y_open  = y_of_cost data_point._open in
+        ctx##beginPath;
+        ctx##moveTo x y_low;
+        ctx##lineTo x y_high;
+        ctx##stroke;
+        let top = max y_open y_close in
+        let height = abs_float (y_open -. y_close) in
+        let width = 4.0 in
+        ctx##fillRect (x -. (width /. 2.))  top width height)
+      data_points
+
+  let render_data {ctx; width; height} summary data_points =
+    fill_background {ctx; width; height};
+    draw_candles {ctx; width; height} summary data_points
 end
 
 let button_onclick () =
@@ -157,8 +207,9 @@ let button_onclick () =
       (fun response ->
         Output.set_message (Js.string "done");
         let open CryptoCompare in
-        Drawing.(with_context (fun context -> render_data context response));
         let summary = Data.summarise response in
+        Drawing.(with_context
+          (fun context -> render_data context summary response.data));
         Output.set_average_high summary.Data.average_high;
         Output.set_average_low  summary.Data.average_low;
         Output.set_overall_high summary.Data.overall_high;
