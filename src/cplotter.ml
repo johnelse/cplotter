@@ -183,7 +183,7 @@ module Drawing = struct
         ctx##moveTo x y_low;
         ctx##lineTo x y_high;
         ctx##stroke;
-        let top = max y_open y_close in
+        let top = min y_open y_close in
         let candle_height = abs_float (y_open -. y_close) in
         let candle_width = 4.0 in
         ctx##fillRect (x -. (candle_width /. 2.)) top candle_width candle_height)
