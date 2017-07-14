@@ -133,6 +133,7 @@ module Drawing = struct
     end
     | None -> ()
 
+  let black      = Js.string "#000000"
   let light_grey = Js.string "#CCCCCC"
   let dark_grey  = Js.string "#666666"
   let red        = Js.string "#FF0000"
@@ -186,7 +187,13 @@ module Drawing = struct
         let candle_height = abs_float (y_open -. y_close) in
         let candle_width = 4.0 in
         ctx##fillRect (x -. (candle_width /. 2.))  top candle_width candle_height)
-      data_points
+      data_points;
+    ctx##.strokeStyle := black;
+    ctx##beginPath;
+    ctx##moveTo axis_gap 0.0;
+    ctx##lineTo axis_gap plot_height;
+    ctx##lineTo width    plot_height;
+    ctx##stroke
 
   let render_data {ctx; width; height} summary data_points =
     fill_background {ctx; width; height};
