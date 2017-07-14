@@ -133,18 +133,20 @@ module Drawing = struct
     end
     | None -> ()
 
+  let light_grey = Js.string "#CCCCCC"
+  let dark_grey  = Js.string "#666666"
+  let red        = Js.string "#FF0000"
+  let green      = Js.string "#00FF00"
+
   let fill_background {ctx; width; height} =
-    ctx##.fillStyle := Js.string "#CCCCCC";
+    ctx##.fillStyle := light_grey;
     ctx##fillRect 0. 0. width height
 
   let choose_colour data_point =
     let open CryptoCompare in
-    let colour_string =
-      if data_point.close > data_point._open then "#00FF00"
-      else if data_point.close < data_point._open then "#FF0000"
-      else "#666666"
-    in
-    Js.string colour_string
+    if data_point.close > data_point._open then green
+    else if data_point.close < data_point._open then red
+    else light_grey
 
   let draw_candles {ctx; width; height} summary data_points =
     let open CryptoCompare in
