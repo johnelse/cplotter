@@ -149,17 +149,21 @@ module Drawing = struct
   let draw_candles {ctx; width; height} summary data_points =
     let open CryptoCompare in
     let open Data in
+    let axis_gap    = 50.0 in
+    let plot_width  = width -. axis_gap in
+    let plot_height = height -. axis_gap in
     let pixels_per_unit_cost =
-      height /.
+      plot_height /.
       (summary.Data.overall_high -. summary.Data.overall_low)
     in
     let x_of_time time =
-      width
+      plot_width
       *. (float_of_int (time            - summary.time_from))
       /. (float_of_int (summary.time_to - summary.time_from))
+      +. axis_gap
     in
     let y_of_cost cost =
-      height -.
+      plot_height -.
       (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
     in
     List.iter
