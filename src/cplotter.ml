@@ -183,9 +183,9 @@ module Drawing = struct
         ctx##lineTo x y_high;
         ctx##stroke;
         let top = max y_open y_close in
-        let height = abs_float (y_open -. y_close) in
-        let width = 4.0 in
-        ctx##fillRect (x -. (width /. 2.))  top width height)
+        let candle_height = abs_float (y_open -. y_close) in
+        let candle_width = 4.0 in
+        ctx##fillRect (x -. (candle_width /. 2.))  top candle_width candle_height)
       data_points
 
   let render_data {ctx; width; height} summary data_points =
