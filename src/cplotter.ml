@@ -114,8 +114,8 @@ end
 module Drawing = struct
   type context = {
     ctx:    Html.canvasRenderingContext2D Js.t;
-    width:  int;
-    height: int;
+    width:  float;
+    height: float;
   }
 
   let get_canvas () =
@@ -126,8 +126,8 @@ module Drawing = struct
     | Some canvas -> begin
       let context = {
         ctx    = canvas##getContext Html._2d_;
-        width  = canvas##.width;
-        height = canvas##.height;
+        width  = float_of_int canvas##.width;
+        height = float_of_int canvas##.height;
       } in
       paint context
     end
@@ -135,7 +135,7 @@ module Drawing = struct
 
   let fill_background {ctx; width; height} =
     ctx##.fillStyle := Js.string "#CCCCCC";
-    ctx##fillRect 0. 0. (float_of_int width) (float_of_int height)
+    ctx##fillRect 0. 0. width height
 
   let choose_colour data_point =
     let open CryptoCompare in
@@ -150,16 +150,16 @@ module Drawing = struct
     let open CryptoCompare in
     let open Data in
     let pixels_per_unit_cost =
-      (float_of_int height) /.
+      height /.
       (summary.Data.overall_high -. summary.Data.overall_low)
     in
     let x_of_time time =
-      (float_of_int width)
+      width
       *. (float_of_int (time            - summary.time_from))
       /. (float_of_int (summary.time_to - summary.time_from))
     in
     let y_of_cost cost =
-      (float_of_int height) -.
+      height -.
       (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
     in
     List.iter
