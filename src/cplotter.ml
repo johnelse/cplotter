@@ -79,6 +79,7 @@ module Data = struct
           (new%js Js.error_constr (Printexc.to_string e |> Js.string)))
 
   type summary = {
+    count:        int;
     average_high: float;
     average_low:  float;
     overall_high: float;
@@ -102,6 +103,7 @@ module Data = struct
         response.data
     in
     {
+      count;
       average_high = sum_high /. (float_of_int count);
       average_low  = sum_low  /. (float_of_int count);
       overall_high;
