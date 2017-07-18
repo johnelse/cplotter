@@ -151,6 +151,13 @@ module Drawing = struct
     else if data_point.close < data_point._open then red
     else light_grey
 
+  let x_of_time summary plot_width axis_gap time =
+    let open Data in
+    plot_width
+    *. (float_of_int (time            - summary.time_from))
+    /. (float_of_int (summary.time_to - summary.time_from))
+    +. axis_gap
+
   let draw_candles {ctx; width; height}
       axis_gap plot_width plot_height summary data_points =
     let open CryptoCompare in
@@ -158,12 +165,6 @@ module Drawing = struct
     let pixels_per_unit_cost =
       plot_height /.
       (summary.Data.overall_high -. summary.Data.overall_low)
-    in
-    let x_of_time time =
-      plot_width
-      *. (float_of_int (time            - summary.time_from))
-      /. (float_of_int (summary.time_to - summary.time_from))
-      +. axis_gap
     in
     let y_of_cost cost =
       plot_height -.
@@ -174,7 +175,7 @@ module Drawing = struct
         let colour = choose_colour data_point in
         ctx##.strokeStyle := colour;
         ctx##.fillStyle := colour;
-        let x = x_of_time data_point.time in
+        let x = x_of_time summary plot_width axis_gap data_point.time in
         let y_close = y_of_cost data_point.close in
         let y_high  = y_of_cost data_point.high in
         let y_low   = y_of_cost data_point.low in
