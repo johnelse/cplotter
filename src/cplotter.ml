@@ -191,12 +191,29 @@ module Drawing = struct
       data_points
 
   let draw_axes {ctx; width; height} axis_gap plot_width plot_height summary =
+    (* Draw main lines of axes. *)
     ctx##.strokeStyle := black;
     ctx##beginPath;
     ctx##moveTo axis_gap 0.0;
     ctx##lineTo axis_gap plot_height;
     ctx##lineTo width    plot_height;
-    ctx##stroke
+    ctx##stroke;
+    (* Draw time scale. *)
+    let open Data in
+    if summary.count > 1 then begin
+      let time_range = summary.time_to - summary.time_from in
+      let time_step = time_range / (summary.count - 1) in
+      let steps_per_tick = max 1 (time_range / time_step / 4) in
+      let ticks = time_range / (steps_per_tick * time_step) + 1 in
+      for tick = 0 to ticks - 1 do
+        ctx##beginPath;
+        let time = summary.time_from + tick * time_step * steps_per_tick in
+        let x = x_of_time summary plot_width axis_gap time in
+        ctx##moveTo x plot_height;
+        ctx##lineTo x (plot_height +. 5.0);
+        ctx##stroke
+      done
+    end
 
   let render_data {ctx; width; height} summary data_points =
     let axis_gap    = 50.0 in
