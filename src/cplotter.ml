@@ -167,7 +167,7 @@ module Drawing = struct
       (summary.Data.overall_high -. summary.Data.overall_low)
     in
     let y_of_cost cost =
-      plot_height -.
+      axis_gap +. plot_height -.
       (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
     in
     List.iter
@@ -194,9 +194,9 @@ module Drawing = struct
     (* Draw main lines of axes. *)
     ctx##.strokeStyle := black;
     ctx##beginPath;
-    ctx##moveTo axis_gap 0.0;
-    ctx##lineTo axis_gap plot_height;
-    ctx##lineTo width    plot_height;
+    ctx##moveTo axis_gap                 axis_gap;
+    ctx##lineTo axis_gap                 (plot_height +. axis_gap);
+    ctx##lineTo (plot_width +. axis_gap) (plot_height +. axis_gap);
     ctx##stroke;
     (* Draw time scale. *)
     let open Data in
@@ -209,16 +209,16 @@ module Drawing = struct
         ctx##beginPath;
         let time = summary.time_from + tick * time_step * steps_per_tick in
         let x = x_of_time summary plot_width axis_gap time in
-        ctx##moveTo x plot_height;
-        ctx##lineTo x (plot_height +. 5.0);
+        ctx##moveTo x (plot_height +. axis_gap);
+        ctx##lineTo x (plot_height +. axis_gap +. 5.0);
         ctx##stroke
       done
     end
 
   let render_data {ctx; width; height} summary data_points =
     let axis_gap    = 50.0 in
-    let plot_width  = width -. axis_gap in
-    let plot_height = height -. axis_gap in
+    let plot_width  = width -. 2.0 *. axis_gap in
+    let plot_height = height -. 2.0 *. axis_gap in
     fill_background {ctx; width; height};
     draw_candles {ctx; width; height}
       axis_gap plot_width plot_height summary data_points;
