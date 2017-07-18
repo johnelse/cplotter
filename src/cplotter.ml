@@ -151,12 +151,10 @@ module Drawing = struct
     else if data_point.close < data_point._open then red
     else light_grey
 
-  let draw_candles {ctx; width; height} summary data_points =
+  let draw_candles {ctx; width; height}
+      axis_gap plot_width plot_height summary data_points =
     let open CryptoCompare in
     let open Data in
-    let axis_gap    = 50.0 in
-    let plot_width  = width -. axis_gap in
-    let plot_height = height -. axis_gap in
     let pixels_per_unit_cost =
       plot_height /.
       (summary.Data.overall_high -. summary.Data.overall_low)
@@ -189,7 +187,9 @@ module Drawing = struct
         let candle_height = abs_float (y_open -. y_close) in
         let candle_width = 4.0 in
         ctx##fillRect (x -. (candle_width /. 2.)) top candle_width candle_height)
-      data_points;
+      data_points
+
+  let draw_axes {ctx; width; height} axis_gap plot_width plot_height summary =
     ctx##.strokeStyle := black;
     ctx##beginPath;
     ctx##moveTo axis_gap 0.0;
@@ -198,8 +198,13 @@ module Drawing = struct
     ctx##stroke
 
   let render_data {ctx; width; height} summary data_points =
+    let axis_gap    = 50.0 in
+    let plot_width  = width -. axis_gap in
+    let plot_height = height -. axis_gap in
     fill_background {ctx; width; height};
-    draw_candles {ctx; width; height} summary data_points
+    draw_candles {ctx; width; height}
+      axis_gap plot_width plot_height summary data_points;
+    draw_axes {ctx; width; height} axis_gap plot_width plot_height summary
 end
 
 let button_onclick () =
