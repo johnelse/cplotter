@@ -102,14 +102,21 @@ module Data = struct
         (0, 0., 0., 0., max_float)
         response.data
     in
+    let time_from, time_to =
+      if count = 0
+      then response.time_from, response.time_to
+      else
+        (List.nth response.data 0).time,
+        (List.nth response.data (count - 1)).time
+    in
     {
       count;
       average_high = sum_high /. (float_of_int count);
       average_low  = sum_low  /. (float_of_int count);
       overall_high;
       overall_low;
-      time_from = response.time_from;
-      time_to   = response.time_to;
+      time_from;
+      time_to;
     }
 end
 
