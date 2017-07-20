@@ -220,7 +220,19 @@ module Drawing = struct
         ctx##lineTo x (plot_height +. axis_gap +. 5.0);
         ctx##stroke
       done
-    end
+    end;
+    (* Draw cost scale. *)
+    for i = 0 to 4 do
+      let cost =
+        summary.overall_low +.
+        (float_of_int i) *. (summary.overall_high -. summary.overall_low) /. 4.0
+      in
+      let y = y_of_cost summary plot_height axis_gap cost in
+      ctx##beginPath;
+      ctx##moveTo axis_gap          y;
+      ctx##lineTo (axis_gap -. 5.0) y;
+      ctx##stroke
+    done
 
   let render_data {ctx; width; height} summary data_points =
     let axis_gap    = 50.0 in
