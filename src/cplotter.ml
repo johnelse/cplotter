@@ -219,7 +219,16 @@ module Drawing = struct
         ctx##beginPath;
         ctx##moveTo x (plot_height +. axis_gap);
         ctx##lineTo x (plot_height +. axis_gap +. 5.0);
-        ctx##stroke
+        ctx##stroke;
+        let date = new%js Js.date_fromTimeValue ((float_of_int time) *. 1000.0) in
+        let time_string = Printf.sprintf "%02d:%02d"
+          date##getHours date##getMinutes in
+        let date_string = Printf.sprintf "%02d/%02d/%04d"
+          date##getDate (date##getMonth + 1) date##getFullYear in
+        ctx##fillText (Js.string time_string)
+          (x -. 15.0) (plot_height +. axis_gap +. 20.0);
+        ctx##fillText (Js.string date_string)
+          (x -. 27.0) (plot_height +. axis_gap +. 40.0)
       done
     end;
     (* Draw cost scale. *)
