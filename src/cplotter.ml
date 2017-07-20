@@ -199,6 +199,7 @@ module Drawing = struct
 
   let draw_axes {ctx; width; height} axis_gap plot_width plot_height summary =
     (* Draw main lines of axes. *)
+    ctx##.fillStyle := black;
     ctx##.strokeStyle := black;
     ctx##beginPath;
     ctx##moveTo axis_gap                 axis_gap;
@@ -231,7 +232,8 @@ module Drawing = struct
       ctx##beginPath;
       ctx##moveTo axis_gap          y;
       ctx##lineTo (axis_gap -. 5.0) y;
-      ctx##stroke
+      ctx##stroke;
+      ctx##fillText (Printf.sprintf "%0.06f" cost |> Js.string) 0.0 (y +. 4.0)
     done
 
   let render_data {ctx; width; height} summary data_points =
