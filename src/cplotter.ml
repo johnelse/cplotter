@@ -213,9 +213,9 @@ module Drawing = struct
       let steps_per_tick = max 1 (time_range / time_step / 4) in
       let ticks = time_range / (steps_per_tick * time_step) + 1 in
       for tick = 0 to ticks - 1 do
-        ctx##beginPath;
         let time = summary.time_from + tick * time_step * steps_per_tick in
         let x = x_of_time summary plot_width axis_gap time in
+        ctx##beginPath;
         ctx##moveTo x (plot_height +. axis_gap);
         ctx##lineTo x (plot_height +. axis_gap +. 5.0);
         ctx##stroke
