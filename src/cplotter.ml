@@ -165,28 +165,28 @@ module Drawing = struct
     /. (float_of_int (summary.time_to - summary.time_from))
     +. axis_gap
 
-  let draw_candles {ctx; width; height}
-      axis_gap plot_width plot_height summary data_points =
-    let open CryptoCompare in
-    let open Data in
+  let y_of_cost summary plot_height axis_gap cost =
     let pixels_per_unit_cost =
       plot_height /.
       (summary.Data.overall_high -. summary.Data.overall_low)
     in
-    let y_of_cost cost =
-      axis_gap +. plot_height -.
-      (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
-    in
+    axis_gap +. plot_height -.
+    (pixels_per_unit_cost *. (cost -. summary.Data.overall_low))
+
+  let draw_candles {ctx; width; height}
+      axis_gap plot_width plot_height summary data_points =
+    let open CryptoCompare in
+    let open Data in
     List.iter
       (fun data_point ->
         let colour = choose_colour data_point in
         ctx##.strokeStyle := colour;
         ctx##.fillStyle := colour;
         let x = x_of_time summary plot_width axis_gap data_point.time in
-        let y_close = y_of_cost data_point.close in
-        let y_high  = y_of_cost data_point.high in
-        let y_low   = y_of_cost data_point.low in
-        let y_open  = y_of_cost data_point._open in
+        let y_close = y_of_cost summary plot_height axis_gap data_point.close in
+        let y_high  = y_of_cost summary plot_height axis_gap data_point.high in
+        let y_low   = y_of_cost summary plot_height axis_gap data_point.low in
+        let y_open  = y_of_cost summary plot_height axis_gap data_point._open in
         ctx##beginPath;
         ctx##moveTo x y_low;
         ctx##lineTo x y_high;
