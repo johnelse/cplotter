@@ -1,4 +1,4 @@
-type currency = [ `BTC | `ETH | `USD | `GBP ]
+type currency = [ `BTC | `ETH | `XMR | `USD | `GBP ]
 
 val to_string : currency -> string
 
